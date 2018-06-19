@@ -45,6 +45,6 @@ public class QuestionCreatorFragment extends Fragment {
 
     @OnClick(R.id.save_question_button)
     protected void saveQuestion(){
-
+        // TODO add and save question
     }
 }

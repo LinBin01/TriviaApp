@@ -9,6 +9,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
 
     private QuestionCreatorFragment questionCreatorFragment;
+    private TakeQuizFragment takeQuizFragment;
 
 
     @Override
