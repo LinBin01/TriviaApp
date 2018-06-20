@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +27,8 @@ public class QuestionCreatorFragment extends Fragment {
     protected EditText secondWrongAnswer;
     @BindView(R.id.third_wrong_answer_editText)
     protected EditText thirdWrongAnswer;
+
+    private Callback callback;
 
 
     @Nullable
@@ -45,15 +49,32 @@ public class QuestionCreatorFragment extends Fragment {
     }
 
     @OnClick(R.id.save_question_button)
-    protected void saveQuestion(){
-        // TODO add and save question
+    protected void saveQuestion() {
 
-        String questionTitle = question.getText().toString();
-        String correctAnswer = this.correctAnswer.getText().toString();
-        String incorrectOne = firstWrongAnswer.getText().toString();
-        String incorrectTwo = secondWrongAnswer.getText().toString();
-        String incorrectThree = thirdWrongAnswer.getText().toString();
+        if (TextUtils.isEmpty(question.getText()) || TextUtils.isEmpty(correctAnswer.getText()) || TextUtils.isEmpty(firstWrongAnswer.getText())
+                || TextUtils.isEmpty(secondWrongAnswer.getText()) || TextUtils.isEmpty(thirdWrongAnswer.getText())) {
+            Toast.makeText(getActivity(), "All fields are required!", Toast.LENGTH_SHORT).show();
 
-        Question question = new Question(questionTitle, correctAnswer, incorrectOne, incorrectTwo, incorrectThree);
+        } else {
+            String questionTitle = question.getText().toString();
+            String correctAnswer = this.correctAnswer.getText().toString();
+            String incorrectOne = firstWrongAnswer.getText().toString();
+            String incorrectTwo = secondWrongAnswer.getText().toString();
+            String incorrectThree = thirdWrongAnswer.getText().toString();
+
+            // take variables created from user input and saves them in the Question object
+            Question question = new Question(questionTitle, correctAnswer, incorrectOne, incorrectTwo, incorrectThree);
+            callback.questionSaved(question);
+        }
+    }
+
+
+    public void attachParent(Callback callback) {
+        this.callback = callback;
+    }
+
+    public interface Callback {
+        void questionSaved(Question question);
+
     }
 }
