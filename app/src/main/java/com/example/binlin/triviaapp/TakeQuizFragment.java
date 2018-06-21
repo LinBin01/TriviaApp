@@ -94,7 +94,7 @@ public class TakeQuizFragment extends Fragment {
         }
     }
 
-    public void attachParent(QuizCallback callback){
+    public void attachParent(QuizCallback callback) {
         quizCallback = callback;
     }
 
@@ -137,16 +137,16 @@ public class TakeQuizFragment extends Fragment {
     @OnClick(R.id.next_question_button)
     protected void nextButtonClicked() {
         enableAnswerButtons();
-        if(questionsListPosition <= questionsList.size() - 1){
+        if (questionsListPosition <= questionsList.size() - 1) {
             populateQuizContent();
-        }else{
+        } else {
             // handling no more questions, taking users back to MainActivity
             quizCallback.quizFinished(correctAnswers);
 
         }
     }
 
-    private void disableAnswerButtons(){
+    private void disableAnswerButtons() {
         firstAnswerButton.setEnabled(false);
         secondAnswerButton.setEnabled(false);
         thirdAnswerButton.setEnabled(false);
@@ -154,7 +154,7 @@ public class TakeQuizFragment extends Fragment {
 
     }
 
-    private void enableAnswerButtons(){
+    private void enableAnswerButtons() {
         firstAnswerButton.setEnabled(true);
         secondAnswerButton.setEnabled(true);
         thirdAnswerButton.setEnabled(true);

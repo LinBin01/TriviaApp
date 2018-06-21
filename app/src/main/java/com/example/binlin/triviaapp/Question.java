@@ -3,14 +3,14 @@ package com.example.binlin.triviaapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Question implements Parcelable{
+public class Question implements Parcelable {
     private String questionTitle;
     private String correctAnswer;
     private String wrongAnswerOne;
     private String wrongAnswerTwo;
     private String wrongAnswerThree;
 
-    public Question(String questionTitle, String correctAnswer,String wrongAnswerOne, String wrongAnswerTwo,String wrongAnswerThree){
+    public Question(String questionTitle, String correctAnswer, String wrongAnswerOne, String wrongAnswerTwo, String wrongAnswerThree) {
         this.questionTitle = questionTitle;
         this.correctAnswer = correctAnswer;
         this.wrongAnswerOne = wrongAnswerOne;
