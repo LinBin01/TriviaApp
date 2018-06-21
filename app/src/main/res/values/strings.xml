@@ -9,4 +9,7 @@
     <string name="add_question">Add Question</string>
     <string name="take_quiz">Take Quiz</string>
     <string name="delete_quiz">Delete Quiz</string>
+    <string name="wrong_answer_text">Wrong. The correct answer is %1$s!</string>
+    <string name="correct_text">Correct!</string>
+    <string name="number_of_correct_answers">You answered %1$d questions correctly</string>
 </resources>

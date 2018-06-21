@@ -1,6 +1,8 @@
 package com.example.binlin.triviaapp;
 
+import android.content.DialogInterface;
 import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -11,7 +13,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements QuestionCreatorFragment.Callback, TakeQuizFragment.Callback{
+public class MainActivity extends AppCompatActivity implements QuestionCreatorFragment.Callback, TakeQuizFragment.QuizCallback {
 
     private QuestionCreatorFragment questionCreatorFragment;
     private TakeQuizFragment takeQuizFragment;
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements QuestionCreatorFr
     }
 
     @OnClick(R.id.add_question_button)
-    protected void addQuestionClicked(){
+    protected void addQuestionClicked() {
         questionCreatorFragment = QuestionCreatorFragment.newInstance();
         questionCreatorFragment.attachParent(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, questionCreatorFragment).commit();
@@ -49,23 +51,63 @@ public class MainActivity extends AppCompatActivity implements QuestionCreatorFr
 
     }
 
-    @OnClick(R.id.take_quiz_button)
-    protected void takeQuizClicked(){
 
-        if(questionList.isEmpty()){
+    @OnClick(R.id.take_quiz_button)
+    protected void takeQuizClicked() {
+
+        if (questionList.isEmpty()) {
             Toast.makeText(this, "Please add a question before taking a quiz!", Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             takeQuizFragment = TakeQuizFragment.newInstance();
             takeQuizFragment.attachParent(this);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, takeQuizFragment).commit();
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(QUESTION_LIST, (ArrayList<? extends Parcelable>) questionList);
+            takeQuizFragment.setArguments(bundle);
         }
     }
 
-    @OnClick(R.id.delete_quiz_button)
-    protected void deleteQuizClicked(){
 
+    @Override
+    public void quizFinished(int correctAnswers) {
+
+        showQuizResultsAlertDialog(correctAnswers);
+        // remove the fragment from the frameLayout
+        getSupportFragmentManager().beginTransaction().remove(takeQuizFragment).commit();
+    }
+
+    private void showQuizResultsAlertDialog(int correctAnswers) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Quiz Finished").setMessage(getString(R.string.number_of_correct_answers, correctAnswers)).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        }).show();
+
+    }
+
+    @OnClick(R.id.delete_quiz_button)
+    protected void deleteQuizClicked() {
+        if (questionList.isEmpty()) {
+            Toast.makeText(this, "There is no quiz to be deleted!", Toast.LENGTH_SHORT).show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Delete Quiz").setMessage("Are you sure to delete this quiz?").setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    questionList.clear();
+                    dialogInterface.dismiss();
+                    Toast.makeText(MainActivity.this, "Quiz Deleted", Toast.LENGTH_SHORT).show();
+                }
+            }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            }).setIcon(android.R.drawable.ic_dialog_alert).show();
+
+        }
     }
 
 }

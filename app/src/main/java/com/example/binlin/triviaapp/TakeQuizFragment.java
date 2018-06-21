@@ -35,12 +35,13 @@ public class TakeQuizFragment extends Fragment {
     private List<Question> questionsList;
     private Question question;
     private int questionsListPosition = 0;
-    private Callback callback;
+    private int correctAnswers = 0;
+    private QuizCallback quizCallback;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_take_quiz,container,false);
+        View view = inflater.inflate(R.layout.fragment_take_quiz, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -66,57 +67,97 @@ public class TakeQuizFragment extends Fragment {
         question = questionsList.get(questionsListPosition);
         quizQuestion.setText(question.getQuestionTitle());
 
+
         List<Button> buttonList = new ArrayList<>();
         buttonList.add(firstAnswerButton);
         buttonList.add(secondAnswerButton);
         buttonList.add(thirdAnswerButton);
         buttonList.add(fourthAnswerButton);
 
+        // Just like with the button, this arrayList will take all of the possible answers and allow us to access them
         List<String> possibleAnswersList = new ArrayList<>();
         possibleAnswersList.add(question.getCorrectAnswer());
         possibleAnswersList.add(question.getWrongAnswerOne());
         possibleAnswersList.add(question.getWrongAnswerTwo());
         possibleAnswersList.add(question.getWrongAnswerThree());
 
-        for(Button button : buttonList){
+        // This for each loop takes the arrayLists we made and actually allows us to randomize what answer goes on which button
+        for (Button button : buttonList) {
 
-            int random = (int) (Math.random() * (possibleAnswersList.size() - 1));
+            // Create a random number that will allow us to pick an answer from our arrayList
+            int random = (int) Math.ceil(Math.random() * (possibleAnswersList.size() - 1));
+
+            // Using the random number above we will set the text of the button by getting that item from the possible answers list.
             button.setText(possibleAnswersList.get(random));
+            // To make sure we don't use the same answer twice we remove the possible answer from the list
             possibleAnswersList.remove(random);
         }
     }
 
-    // TODO something to watch out for
-    public void attachParent(Callback callback) {
-        this.callback = callback;
+    public void attachParent(QuizCallback callback){
+        quizCallback = callback;
     }
 
-    public interface Callback {
+    public interface QuizCallback {
+        void quizFinished(int correctAnswers);
+    }
 
+    private void checkAnswer(String answer) {
+        questionsListPosition++;
+        // if the input answer is equal to the correct answer, then the texView will tell user if they were correct and increment the correct answers
+        if (question.getCorrectAnswer().equals(answer)) {
+            quizQuestion.setText(R.string.correct_text);
+            correctAnswers++;
+        } else {
+            quizQuestion.setText(getString(R.string.wrong_answer_text, question.getCorrectAnswer()));
+        }
+        disableAnswerButtons();
     }
 
     @OnClick(R.id.first_answer_button)
-    protected void firstAnswerClicked(){
-
+    protected void firstAnswerClicked() {
+        checkAnswer(firstAnswerButton.getText().toString());
     }
 
     @OnClick(R.id.second_answer_button)
-    protected void secondAnswerClicked(){
-
+    protected void secondAnswerClicked() {
+        checkAnswer(secondAnswerButton.getText().toString());
     }
 
     @OnClick(R.id.third_answer_button)
-    protected void thirdAnswerClicked(){
-
+    protected void thirdAnswerClicked() {
+        checkAnswer(thirdAnswerButton.getText().toString());
     }
 
     @OnClick(R.id.fourth_answer_button)
-    protected void fourthAnswerClicked(){
-
+    protected void fourthAnswerClicked() {
+        checkAnswer(fourthAnswerButton.getText().toString());
     }
 
     @OnClick(R.id.next_question_button)
-    protected void nextButtonClicked(){
+    protected void nextButtonClicked() {
+        enableAnswerButtons();
+        if(questionsListPosition <= questionsList.size() - 1){
+            populateQuizContent();
+        }else{
+            // handling no more questions, taking users back to MainActivity
+            quizCallback.quizFinished(correctAnswers);
 
+        }
+    }
+
+    private void disableAnswerButtons(){
+        firstAnswerButton.setEnabled(false);
+        secondAnswerButton.setEnabled(false);
+        thirdAnswerButton.setEnabled(false);
+        fourthAnswerButton.setEnabled(false);
+
+    }
+
+    private void enableAnswerButtons(){
+        firstAnswerButton.setEnabled(true);
+        secondAnswerButton.setEnabled(true);
+        thirdAnswerButton.setEnabled(true);
+        fourthAnswerButton.setEnabled(true);
     }
 }
